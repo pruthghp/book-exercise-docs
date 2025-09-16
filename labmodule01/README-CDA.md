@@ -18,7 +18,7 @@ URL: https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule01
 
 ### UML Design Diagram(s)
 
-https://drive.google.com/drive/u/0/folders/1pu0YVipDj8xHfdi8Z8gi6Or5PjkQ7CM3
+https://drive.google.com/file/d/1iOEEt83DvTk7zUg_u2hqv224JREEJ_U_/view?usp=drive_link
 
 ### Unit Tests Executed
 
