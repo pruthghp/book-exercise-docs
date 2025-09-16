@@ -2,48 +2,26 @@
 
 ## Lab Module 01
 
-Be sure to implement all the PIOT-GDA-* issues (requirements) listed at [PIOT-INF-01-001 - Lab Module 01](https://github.com/orgs/programming-the-iot/projects/1#column-9974937).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+**What does your implementation do?**
+My implementation establishes the core development environment and configuration framework for the Gateway Device Application. It sets up Java 17 with the Maven build system, configures file paths for the configuration loader, and ensures that the application can compile, load configuration files, and execute basic tests. This creates a stable foundation for the Gateway Device Application to run reliably and serves as the entry point for future lab modules.
 
-What does your implementation do? 
-
-How does your implementation work?
+**How does your implementation work?**
+The solution uses Java's **ConfigUtil** class to load configuration properties from the *PiotConfig.props* file, with the system configured to reference the correct file paths just like the CDA's absolute path handling. Compatibility with Java 17 was ensured to prevent dependency version conflicts, while Maven manages dependencies and provides a consistent build process. The **GatewayDeviceApp** class acts as the main entry point, initializing the configuration system, starting the runtime, and supporting clean shutdown after a specified execution period with proper logging across the lifecycle.
 
 ### Code Repository and Branch
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
-
-URL: 
+URL: https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule01
 
 ### UML Design Diagram(s)
-
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
 
 
 ### Unit Tests Executed
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
-
-- 
-- 
-- 
+* ConfigUtilDefaultTest
+* ConfigUtilCustomTest
 
 ### Integration Tests Executed
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+* GatewayDeviceAppTest
