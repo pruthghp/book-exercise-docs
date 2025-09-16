@@ -2,48 +2,32 @@
 
 ## Lab Module 02
 
-Be sure to implement all the PIOT-GDA-* issues (requirements) listed at [PIOT-INF-02-001 - Lab Module 02](https://github.com/orgs/programming-the-iot/projects/1#column-9974938).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+**What does your implementation do?**
 
-What does your implementation do? 
+My Lab Module 02 implementation creates a system monitoring framework for the Gateway Device Application that can track CPU load and JVM memory usage. The implementation extends Lab Module 01 by adding Java-based monitoring classes that collect system performance data from the Gateway Device. The main components include task classes for CPU and memory monitoring, a base class for shared functionality, and a performance manager that coordinates data collection using Java's built-in threading.
 
-How does your implementation work?
+**How does your implementation work?**
+
+The implementation works by using Java's ManagementFactory to access system and JVM performance metrics through scheduled thread execution. I created BaseSystemUtilTask as the abstract parent class, then SystemCpuUtilTask uses getSystemLoadAverage() for CPU monitoring while SystemMemUtilTask calculates JVM heap memory utilization percentages. The SystemPerformanceManager uses ScheduledExecutorService to run monitoring tasks at regular intervals and coordinates with the GatewayDeviceApp lifecycle. The manager starts and stops monitoring along with the main application, ensuring system resources are properly managed and performance data is collected throughout the application runtime.
 
 ### Code Repository and Branch
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
-
-URL: 
+URL: https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule02
 
 ### UML Design Diagram(s)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
 
 
 ### Unit Tests Executed
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
-
-- 
-- 
-- 
+* ConfigUtilDefaultTest
+* ConfigUtilCustomTest
+* SystemCpuUtilTaskTest
+* SystemMemUtilTaskTest
 
 ### Integration Tests Executed
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+* GatewayDeviceAppTest
+* SystemPerformanceManagerTest
