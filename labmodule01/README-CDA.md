@@ -2,48 +2,29 @@
 
 ## Lab Module 01
 
-Be sure to implement all the PIOT-CDA-* issues (requirements) listed at [PIOT-INF-01-001 - Lab Module 01](https://github.com/orgs/programming-the-iot/projects/1#column-9974937).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+**What does your implementation do?**
 
-What does your implementation do? 
+My implementation sets up the core development environment and configuration system for the Constrained Device Application. It establishes a Python virtual environment, configures the necessary file paths, and ensures that configuration files can be loaded correctly. With this foundation, the application can execute basic tests without running into import errors, providing a stable starting point for further development.
 
-How does your implementation work?
+**How does your implementation work?**
+
+The solution resolves path-related issues by updating the `DEFAULT_CONFIG_FILE_NAME` in **ConfigConst.py** to use an absolute path (`/home/connected-devices/programmingtheiot/cda-python-components/config/PiotConfig.props`) instead of a relative one. This guarantees consistent access to the configuration file across different execution contexts. The **ConstrainedDeviceApp** class serves as the main entry point, handling configuration loading and initializing the CDA runtime, while the virtual environment isolates dependencies to avoid conflicts with other projects.
 
 ### Code Repository and Branch
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
-
-URL: 
+URL: https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule01
 
 ### UML Design Diagram(s)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
 
 
 ### Unit Tests Executed
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
-
-- 
-- 
-- 
+* ConfigUtilDefaultTest
+* ConfigUtilCustomTest
 
 ### Integration Tests Executed
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+* ConstrainedDeviceAppTest
