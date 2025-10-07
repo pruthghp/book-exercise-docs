@@ -27,7 +27,7 @@ The DeviceDataManager connects into GatewayDeviceApp through composition. When t
 
 ### Code Repository and Branch
 
-URL: https://github.com/pruthghp/gda-java-components-pruthghp/tree/labmodule05
+URL: https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule05
 
 ### UML Design Diagram(s)
 
