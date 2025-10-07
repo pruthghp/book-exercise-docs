@@ -4,7 +4,7 @@
 
 ### Description
 
-**What does your implementation do?**
+### What does your implementation do?
 
 Lab Module 04 adds Sense HAT emulator support to the CDA, letting the app read sensor data and control actuators through a virtual hardware interface.
 
@@ -14,7 +14,7 @@ The implementation brings in six emulator task classes:
 
 The SensorAdapterManager and ActuatorAdapterManager were updated so the system can load either simulator or emulator tasks depending on the enableEmulator setting. This means you can switch between simulation and emulation without touching the code.
 
-**How does your implementation work?**
+### How does your implementation work?
 
 The emulator uses the pisense library, which gives a Python interface to the Sense HAT emulator. When useEmulator is set to True in the config, the adapter managers use Python's import_module to load emulator classes at runtime instead of simulator ones.
 
