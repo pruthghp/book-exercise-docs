@@ -2,48 +2,56 @@
 
 ## Lab Module 05
 
-Be sure to implement all the PIOT-CDA-* issues (requirements) listed at [PIOT-INF-05-001 - Lab Module 05](https://github.com/orgs/programming-the-iot/projects/1#column-10488421).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+### What does your implementation do?
 
-What does your implementation do? 
+Lab Module 05 adds data transformation and JSON serialization features to the CDA.
 
-How does your implementation work?
+The SystemPerformanceManager was updated to create SystemPerformanceData objects with CPU and memory usage, and then call the registered listener callbacks to pass this data through the system.
+
+A new DataUtil class was built to handle JSON serialization and deserialization for all three core data types:
+- ActuatorData
+- SensorData
+- SystemPerformanceData
+
+### How does your implementation work?
+
+The implementation uses Python's built-in json library along with a custom JsonDataEncoder, which turns Python objects into dictionaries using their __dict__ attribute. This makes it easy to switch between object instances and JSON strings with the right formatting.
+
+**The data transformation works in both directions:**
+
+- **Object → JSON:** The _generateJsonData() method uses json.dumps() with the custom encoder. It also fixes formatting issues like making boolean values lowercase and normalizing quotes.
+- **JSON → Object:** The _formatDataAndLoadDictionary() method first parses JSON strings into dictionaries. Then _updateIotData() uses Python's setattr() to map dictionary key-value pairs to object attributes. This generic method works for all data types by using Python's vars() function for introspection.
+
+The updates to SystemPerformanceManager tie this together by creating structured SystemPerformanceData objects during each telemetry cycle, filling in the location ID and utilization values, and sending them through the registered listener using setDataMessageListener(). This completes the data flow from collection → transformation → callback notification.
 
 ### Code Repository and Branch
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
-
-URL: 
+URL: https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule05
 
 ### UML Design Diagram(s)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
-
+Link: https://drive.google.com/file/d/1oP90TknJgThCGXOYagoEmrwJ65GO0-XP/view?usp=drive_link
 
 ### Unit Tests Executed
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
-
-- 
-- 
-- 
+- ConfigDefaultUtilTest
+- ConfigCustomUtilTest
+- SystemCpuUtilTaskTest
+- SystemMemUtilTaskTest
+- HumiditySensorSimTaskTest
+- PressureSensorSimTaskTest
+- TemperatureSensorSimTaskTest
+- HumidifierActuatorSimTaskTest
+- HvacActuatorSimTaskTest
+- DataUtilTest
 
 ### Integration Tests Executed
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+- SystemPerformanceManagerTest
+- SensorAdapterManagerTest
+- ActuatorAdapterManagerTest
+- DeviceDataManagerNoCommsTest
+- ConstrainedDeviceAppTest
+- DataIntegrationTest
