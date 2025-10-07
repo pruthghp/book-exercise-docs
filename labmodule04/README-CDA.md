@@ -2,48 +2,60 @@
 
 ## Lab Module 04
 
-Be sure to implement all the PIOT-CDA-* issues (requirements) listed at [PIOT-INF-04-001 - Lab Module 04](https://github.com/orgs/programming-the-iot/projects/1#column-10488386).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+**What does your implementation do?**
 
-What does your implementation do? 
+Lab Module 04 adds Sense HAT emulator support to the CDA, letting the app read sensor data and control actuators through a virtual hardware interface.
 
-How does your implementation work?
+The implementation brings in six emulator task classes:
+- **Sensors:** HumiditySensorEmulatorTask, PressureSensorEmulatorTask, TemperatureSensorEmulatorTask – these read data from the Sense HAT emulator.
+- **Actuators:** HumidifierEmulatorTask, HvacEmulatorTask, LedDisplayEmulatorTask – these show actuator status on the emulator's 8x8 LED matrix.
+
+The SensorAdapterManager and ActuatorAdapterManager were updated so the system can load either simulator or emulator tasks depending on the enableEmulator setting. This means you can switch between simulation and emulation without touching the code.
+
+**How does your implementation work?**
+
+The emulator uses the pisense library, which gives a Python interface to the Sense HAT emulator. When useEmulator is set to True in the config, the adapter managers use Python's import_module to load emulator classes at runtime instead of simulator ones.
+
+- Each sensor emulator task makes a SenseHAT instance in emulation mode and pulls readings directly from the virtual sensors (sh.environ.humidity, sh.environ.pressure, sh.environ.temperature).
+- Actuator emulator tasks show messages on the LED display using scroll_text(). For example, when the HVAC turns on, it might show: "HVAC ON: 20.0C".
+
+For this to work, the emulator GUI must be running.
 
 ### Code Repository and Branch
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
-
-URL: 
+URL: https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule04
 
 ### UML Design Diagram(s)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
-
+Link: https://drive.google.com/file/d/1mOL998PoQ7OkOINPCWh2Z4BydmGbKbm3/view?usp=drive_link
 
 ### Unit Tests Executed
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
-
-- 
-- 
-- 
+- ConfigDefaultUtilTest
+- ConfigCustomUtilTest
+- SystemCpuUtilTaskTest
+- SystemMemUtilTaskTest
+- HumiditySensorSimTaskTest
+- PressureSensorSimTaskTest
+- TemperatureSensorSimTaskTest
+- HumidifierActuatorSimTaskTest
+- HvacActuatorSimTaskTest
 
 ### Integration Tests Executed
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+- SystemPerformanceManagerTest
+- SensorAdapterManagerTest
+- ActuatorAdapterManagerTest
+- DeviceDataManagerNoCommsTest
+- ConstrainedDeviceAppTest
+- SenseHatEmulatorQuickTest
+- HumiditySensorEmulatorTaskTest
+- PressureSensorEmulatorTaskTest
+- TemperatureSensorEmulatorTaskTest
+- HumidifierEmulatorTaskTest
+- HvacEmulatorTaskTest
+- LedDisplayEmulatorTaskTest
+- SensorEmulatorManagerTest
+- ActuatorEmulatorManagerTest
