@@ -2,48 +2,51 @@
 
 ## Lab Module 03
 
-Be sure to implement all the PIOT-CDA-* issues (requirements) listed at [PIOT-INF-03-001 - Lab Module 03](https://github.com/orgs/programming-the-iot/projects/1#column-10488379).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+### What does your implementation do?
 
-What does your implementation do? 
+Lab Module 03 builds the basic sensor and actuator simulation setup for the Constrained Device Application (CDA). The main piece is the DeviceDataManager, which acts as the hub for handling all data inside the CDA.
 
-How does your implementation work?
+DeviceDataManager works with three managers:
+- SystemPerformanceManager – keeps track of CPU and memory use.
+- SensorAdapterManager – creates simulated environmental sensor data (humidity, pressure, temperature).
+- ActuatorAdapterManager – runs simulated actuators (HVAC, humidifier).
+
+The system also has automatic HVAC control based on temperature. DeviceDataManager checks the sensor data and, if the temperature goes outside the set range (18.0°C to 20.0°C), it sends a command to the HVAC actuator to bring it back in range.
+
+### How does your implementation work?
+
+The setup uses a callback-based design with the IDataMessageListener interface. Each manager points to DeviceDataManager as its listener, so whenever new telemetry data is created, the manager calls back into DeviceDataManager. DeviceDataManager then processes the data and takes the right action. For example, if a temperature reading is too high or too low, it creates an ActuatorData command and sends it to ActuatorAdapterManager to adjust the HVAC.
+
+All sensor and actuator tasks are built on common base classes (BaseSensorSimTask and BaseActuatorSimTask). These provide shared features, and the subclasses add the specific simulation details using pre-generated datasets.
+
+Finally, the whole system runs inside ConstrainedDeviceApp, which starts and stops the DeviceDataManager to control the CDA lifecycle.
 
 ### Code Repository and Branch
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
-
-URL: 
+URL: https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule03
 
 ### UML Design Diagram(s)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
-
+Link: https://drive.google.com/file/d/1S98i-VQJML_6x7o9tZXthOdQu7VGs8mA/view?usp=drive_link
 
 ### Unit Tests Executed
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
-
-- 
-- 
-- 
+- ConfigDefaultUtilTest
+- ConfigCustomUtilTest
+- SystemCpuUtilTaskTest
+- SystemMemUtilTaskTest
+- HumiditySensorSimTaskTest
+- PressureSensorSimTaskTest
+- TemperatureSensorSimTaskTest
+- HumidifierActuatorSimTaskTest
+- HvacActuatorSimTaskTest
 
 ### Integration Tests Executed
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+- SystemPerformanceManagerTest
+- SensorAdapterManagerTest
+- ActuatorAdapterManagerTest
+- DeviceDataManagerNoCommsTest
+- ConstrainedDeviceAppTest
