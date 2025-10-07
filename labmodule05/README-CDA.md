@@ -46,6 +46,7 @@ Link: https://drive.google.com/file/d/1oP90TknJgThCGXOYagoEmrwJ65GO0-XP/view?usp
 - HumidifierActuatorSimTaskTest
 - HvacActuatorSimTaskTest
 - DataUtilTest
+- DataIntegrationTest
 
 ### Integration Tests Executed
 
@@ -54,4 +55,3 @@ Link: https://drive.google.com/file/d/1oP90TknJgThCGXOYagoEmrwJ65GO0-XP/view?usp
 - ActuatorAdapterManagerTest
 - DeviceDataManagerNoCommsTest
 - ConstrainedDeviceAppTest
-- DataIntegrationTest
