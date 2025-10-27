@@ -2,48 +2,74 @@
 
 ## Lab Module 07
 
-Be sure to implement all the PIOT-GDA-* issues (requirements) listed at [PIOT-INF-07-001 - Lab Module 07](https://github.com/orgs/programming-the-iot/projects/1#column-10488499).
+## Description
 
-### Description
+### What does your implementation do?
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+This implementation enables **MQTT-based publish/subscribe communication** for the **Gateway Device Application (GDA)** using Java. The **MqttClientConnector** class acts as the primary communication interface between the GDA and an **MQTT broker (Mosquitto)**, supporting two-way messaging for telemetry data collection from constrained devices, actuator command distribution, and system management operations.
 
-What does your implementation do? 
+The connector implements both the **IPubSubClient** interface (for publish/subscribe operations) and the **MqttCallbackExtended** interface (for handling MQTT protocol events through callback mechanisms). Built using the **Eclipse Paho Java MQTT client library**, the implementation supports synchronous message delivery via **MqttClient** for reliable request–response communication and can also be configured to use **MqttAsyncClient** for asynchronous, concurrent message handling.
 
-How does your implementation work?
+Integration with the **DeviceDataManager** automates lifecycle management, establishing broker connections during application startup, subscribing to multiple resource topics (such as GDA management status, CDA actuator responses, sensor messages, and system performance data), and performing graceful disconnection during shutdown.
 
-### Code Repository and Branch
+The implementation fully supports all three **MQTT Quality of Service (QoS) levels (0, 1, and 2)** and handles all **14 MQTT 3.1.1 control packets** through detailed test cases, covering:
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
+- **Connection establishment:** CONNECT / CONNACK
+- **Keep-alive operations:** PINGREQ / PINGRESP
+- **Message publishing and acknowledgments:** PUBLISH / PUBACK (QoS 1), PUBLISH / PUBREC / PUBREL / PUBCOMP (QoS 2)
+- **Subscription management:** SUBSCRIBE / SUBACK, UNSUBSCRIBE / UNSUBACK
+- **Graceful disconnection:** DISCONNECT
 
-URL: 
+Overall, this setup ensures reliable, flexible, and standard-compliant MQTT communication between the GDA and the broker, adaptable for both synchronous and asynchronous use cases.
 
-### UML Design Diagram(s)
+### How does your implementation work?
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+This implementation follows a **layered architecture**, where the **MqttClientConnector** manages all MQTT communication, while the **DeviceDataManager** oversees application-level message handling and routing.
 
+During initialization, the connector retrieves configuration parameters from **PiotConfig.props**, including the broker address, port, communication protocol, keep-alive interval, default QoS level, and client operation mode (synchronous or asynchronous). The constructor sets up a **MemoryPersistence** mechanism for message storage, creates **MqttConnectOptions** with key parameters (keep-alive interval, persistent sessions by setting clean session to false, and automatic reconnection enabled), and constructs the broker URL.
 
-### Unit Tests Executed
+The **connectClient()** method instantiates the **Paho MqttClient** using the broker address, generated client ID, and persistence configuration. It registers the connector as the callback handler for MQTT events, establishes a TCP connection to the broker, and starts the message processing loop.
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
+Each callback method handles a specific MQTT protocol event:
 
-- 
-- 
-- 
+- **connectComplete()** – Logs successful connections and reconnection status.
+- **connectionLost()** – Handles unexpected disconnections and logs errors.
+- **deliveryComplete()** – Confirms successful message publication.
+- **messageArrived()** – Processes incoming messages on subscribed topics.
 
-### Integration Tests Executed
+The **publishMessage()** method validates topics and QoS levels, converts message strings to byte arrays, creates **MqttMessage** objects with appropriate QoS settings, and publishes them to the broker. The **subscribeToTopic()** and **unsubscribeFromTopic()** methods manage topic subscriptions while validating QoS levels for correctness.
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
+Integration with the **DeviceDataManager** occurs through three main lifecycle methods:
+- **initManager()** – Instantiates the **MqttClientConnector** when MQTT functionality is enabled.
+- **startManager()** – Connects to the broker and subscribes to four key resource topics:
+  - GDA management status messages
+  - CDA actuator responses
+  - CDA sensor messages
+  - CDA system performance messages
+- **stopManager()** – Unsubscribes from all topics and gracefully disconnects from the broker.
 
-- 
-- 
-- 
+Finally, a comprehensive test suite validates all core functionalities, including connection lifecycle management, keep-alive mechanisms, and publish/subscribe operations across all QoS levels. This ensures full compliance with the **MQTT 3.1.1 protocol** and reliable communication between devices and the GDA.
 
-EOF.
+## Code Repository and Branch
+
+URL: https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule07
+
+## UML Design Diagram(s)
+
+URL: https://drive.google.com/file/d/1AVPSEQJfmzTvcD9CqFfqFADDxyCOYXw3/view?usp=sharing
+
+## Unit Tests Executed
+
+- **Old:** All Part 01 and Part 02 unit tests
+- **New:** None
+
+## Integration Tests Executed
+
+- **Old:** All Part 01 and Part 02 integration tests
+- **New:**
+  - **MqttClientConnectorTest**
+  - **MqttClientControlPacketTest**
+
+---
+
+**EOF**
