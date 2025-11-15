@@ -1,49 +1,53 @@
-# Gateway Device Application (Connected Devices)
+## Gateway Device Application (Connected Devices)
+### Lab Module 08
+---
+## Description:
 
-## Lab Module 08
+### **What does your implementation do?**
 
-Be sure to implement all the PIOT-GDA-* issues (requirements) listed at [PIOT-INF-08-001 - Lab Module 08](https://github.com/orgs/programming-the-iot/projects/1#column-10488501).
+My Lab Module 08 implementation creates a CoAP server for the Gateway Device Application (GDA) using the Eclipse Californium framework, enabling RESTful communication with Constrained Device Applications through a hierarchical resource-oriented architecture.
 
-### Description
+**Key features:**
+- Three specialized resource handlers organized in PIOT/ConstrainedDevice/ResourceName hierarchy
+- GetActuatorCommandResourceHandler provides actuator commands with observable support for real-time push notifications
+- UpdateTelemetryResourceHandler receives sensor data via PUT requests
+- UpdateSystemPerformanceResourceHandler receives system performance metrics via PUT requests
+- Resource discovery through standard .well-known/core endpoint
+- Support for GET, PUT, POST, and DELETE operations with appropriate response codes
+- Integration with DeviceDataManager through IDataMessageListener and IActuatorDataListener interfaces
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+---
+### **How does your implementation work?**
 
-What does your implementation do? 
+CoapServerGateway initializes during DeviceDataManager construction, creating a Californium CoapServer and registering resource handlers through initDefaultResources(). The createAndAddResourceChain() method parses resource paths into segments, builds the tree hierarchy with intermediate CoapResource nodes, and attaches handlers at leaf positions.
 
-How does your implementation work?
+**Implementation flow:**
+- Update handlers receive PUT requests with JSON payloads, convert to SensorData or SystemPerformanceData using DataUtil, and invoke DeviceDataManager callbacks
+- GetActuatorCommandResourceHandler implements IActuatorDataListener to receive updates from DeviceDataManager, maintains local ActuatorData state, and calls super.changed() to notify observers
+- Server lifecycle integrates with DeviceDataManager's startManager()/stopManager() methods
+- MessageTracer interceptors attached to all endpoints for debugging
+- Observable pattern enabled via setObservable(true) for real-time CDA notifications
 
-### Code Repository and Branch
+---
+## Code Repository and Branch:
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
+**URL:** [https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule08](https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule08)
 
-URL: 
+---
+## UML Design Diagram(s):
 
-### UML Design Diagram(s)
+**Link:** [UML Class Diagram](https://drive.google.com/file/d/1aopzO0FYRp3JCByrdvljhm1cxh_f2OHM/view?usp=sharing)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+---
+## Unit Tests Executed:
 
+**None**
 
-### Unit Tests Executed
+---
+## Integration Tests Executed:
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
+- CoapClientToServerConnectorTest
+- CoapServerGatewayTest
 
-- 
-- 
-- 
-
-### Integration Tests Executed
-
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+---
+**EOF.**

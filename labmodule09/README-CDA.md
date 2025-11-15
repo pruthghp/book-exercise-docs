@@ -1,49 +1,54 @@
-# Constrained Device Application (Connected Devices)
+## Constrained Device Application (Connected Devices)
+### Lab Module 09
+---
+## Description:
 
-## Lab Module 09
+### **What does your implementation do?**
 
-Be sure to implement all the PIOT-CDA-* issues (requirements) listed at [PIOT-INF-09-001 - Lab Module 09](https://github.com/orgs/programming-the-iot/projects/1#column-10488503).
+My Lab Module 09 implementation creates a fully asynchronous CoAP client for the Constrained Device Application (CDA) using the aiocoap library, enabling comprehensive communication with the Gateway Device Application's CoAP server across all standard CoAP operations.
 
-### Description
+**Key features:**
+- AsyncCoapClientConnector implements six core CoAP operations: Discovery, GET, PUT, POST, DELETE, and OBSERVE
+- Resource discovery enumerates available resources on the GDA server through .well-known/core
+- GET requests retrieve actuator command data from GDA
+- PUT and POST requests transmit sensor telemetry and system performance data upstream to GDA
+- DELETE requests remove resources from the server
+- OBSERVE support enables real-time push notifications from observable resources, eliminating polling
+- Support for both confirmable (CON) and non-confirmable (NON) message delivery modes
+- Integration with DeviceDataManager through IDataMessageListener for processing incoming actuator commands
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+---
+### **How does your implementation work?**
 
-What does your implementation do? 
+AsyncCoapClientConnector employs an event-driven asynchronous architecture using Python's asyncio framework with threading integration. During initialization, _initEventLoop() creates a dedicated asyncio event loop running in a separate daemon thread executing loop.run_forever(), and _initClientContext() establishes the aiocoap Context for CoAP communication.
 
-How does your implementation work?
+**Implementation flow:**
+- Public methods (sendGetRequest, sendPutRequest, etc.) construct resource paths, schedule async handlers on the event loop using run_coroutine_threadsafe(), and wait for results with configurable timeouts
+- Async handlers create aiocoap Message objects with appropriate codes (GET, PUT, POST, DELETE), message types (CON/NON), and UTF-8 encoded payloads, then send via clientContext.request()
+- Response handlers decode JSON payloads; _onGetResponse() specifically converts ActuatorData JSON and invokes DeviceDataManager.handleActuatorCommandMessage() callback
+- OBSERVE implementation in _handleStartObserveRequest() sends GET with observe=0, stores request in observeRequests dictionary, processes initial response, then enters async for loop over req.observation for continuous notifications
+- stopObserver() cancels the observation task, calls _handleStopObserveRequest() for cleanup, and removes entries from observeTasks and observeRequests dictionaries
+- DeviceDataManager creates AsyncCoapClientConnector during initialization when enableCoapClient is true, passing itself as the data message listener
 
-### Code Repository and Branch
+---
+## Code Repository and Branch:
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
+**URL:** [https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule09](https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule09)
 
-URL: 
+---
+## UML Design Diagram(s):
 
-### UML Design Diagram(s)
+**Link:** [UML Class Diagram](https://drive.google.com/file/d/1Q1hMQSZ5YqQCl-0-fr5NTiQuniWa1Lu8/view?usp=sharing)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+---
+## Unit Tests Executed:
 
+**None**
 
-### Unit Tests Executed
+---
+## Integration Tests Executed:
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
+- CoapAsyncClientConnectorTest (Discovery, GET, PUT, POST, DELETE, OBSERVE)
 
-- 
-- 
-- 
-
-### Integration Tests Executed
-
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+---
+**EOF.**
