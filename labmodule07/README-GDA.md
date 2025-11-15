@@ -4,7 +4,7 @@
 
 ## Description
 
-### What does your implementation do?
+## What does your implementation do?
 
 This implementation enables **MQTT-based publish/subscribe communication** for the **Gateway Device Application (GDA)** using Java. The **MqttClientConnector** class acts as the primary communication interface between the GDA and an **MQTT broker (Mosquitto)**, supporting two-way messaging for telemetry data collection from constrained devices, actuator command distribution, and system management operations.
 
@@ -22,7 +22,8 @@ The implementation fully supports all three **MQTT Quality of Service (QoS) leve
 
 Overall, this setup ensures reliable, flexible, and standard-compliant MQTT communication between the GDA and the broker, adaptable for both synchronous and asynchronous use cases.
 
-### How does your implementation work?
+
+## How does your implementation work?
 
 This implementation follows a **layered architecture**, where the **MqttClientConnector** manages all MQTT communication, while the **DeviceDataManager** oversees application-level message handling and routing.
 
@@ -40,6 +41,7 @@ Each callback method handles a specific MQTT protocol event:
 The **publishMessage()** method validates topics and QoS levels, converts message strings to byte arrays, creates **MqttMessage** objects with appropriate QoS settings, and publishes them to the broker. The **subscribeToTopic()** and **unsubscribeFromTopic()** methods manage topic subscriptions while validating QoS levels for correctness.
 
 Integration with the **DeviceDataManager** occurs through three main lifecycle methods:
+
 - **initManager()** – Instantiates the **MqttClientConnector** when MQTT functionality is enabled.
 - **startManager()** – Connects to the broker and subscribes to four key resource topics:
   - GDA management status messages
@@ -69,7 +71,5 @@ URL: https://drive.google.com/file/d/1AVPSEQJfmzTvcD9CqFfqFADDxyCOYXw3/view?usp=
 - **New:**
   - **MqttClientConnectorTest**
   - **MqttClientControlPacketTest**
-
----
 
 **EOF**
