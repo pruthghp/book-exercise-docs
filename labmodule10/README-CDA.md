@@ -2,48 +2,55 @@
 
 ## Lab Module 10
 
-Be sure to implement all the PIOT-CDA-* issues (requirements) listed at [PIOT-INF-10-001 - Lab Module 10](https://github.com/orgs/programming-the-iot/projects/1#column-10488510).
+---
 
-### Description
+## Description:
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+### What does your implementation do?
 
-What does your implementation do? 
+This implementation extends the Constrained Device Application (CDA) to support secure, bidirectional MQTT communication with the Gateway Device Application (GDA). The CDA now receives actuator commands from the GDA via MQTT subscriptions, processes them through a callback-driven architecture, and autonomously responds to environmental conditions by triggering HVAC actuation when temperature thresholds are violated. All sensor data, system performance metrics, and actuator responses are automatically published to the GDA via MQTT, enabling comprehensive remote monitoring and control.
 
-How does your implementation work?
+**Key capabilities added:**
+- TLS encryption support for secure MQTT broker connections
+- Automatic subscription to actuator command topics upon broker connection
+- Topic-specific callback handling for incoming actuator commands from GDA
+- Temperature-based automation that triggers HVAC adjustments when readings exceed configured ceiling (20°C) or drop below floor (18°C)
+- Upstream transmission of all telemetry data (sensors, system performance, actuator responses) to GDA via MQTT
+- Duplicate command filtering to prevent redundant actuations
+- Non-blocking asynchronous MQTT operations to avoid deadlock
 
-### Code Repository and Branch
+### How does your implementation work?
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
+The implementation uses a layered callback architecture where MqttClientConnector handles MQTT protocol operations and DeviceDataManager orchestrates data flow. When connectClient() establishes a broker connection, the onConnect() callback automatically subscribes to the CDA_ACTUATOR_CMD_RESOURCE topic and registers onActuatorCommandMessage() as the topic-specific handler. Incoming actuator commands are deserialized from JSON to ActuatorData objects and passed to DeviceDataManager.handleActuatorCommandMessage(), which routes them through ActuatorAdapterManager to the appropriate emulator task (HvacEmulatorTask, HumidifierActuatorSimTask, etc.).
 
-URL: 
+**Data flow mechanisms:**
+- **Inbound (GDA → CDA):** MQTT subscription → onActuatorCommandMessage() → JSON deserialization → DeviceDataManager.handleActuatorCommandMessage() → ActuatorAdapterManager → Actuator task execution
+- **Outbound (CDA → GDA):** Sensor/SysPerfManager → handleSensorMessage()/handleSystemPerformanceMessage() → JSON encoding → _handleUpstreamTransmission() → MQTT publish to GDA
+- **Autonomous Control:** SensorAdapterManager polls every 5 seconds → _handleSensorDataAnalysis() checks temp thresholds → triggers handleActuatorCommandMessage() if violated → HVAC actuation → response sent to GDA
+- **TLS Security:** Conditionally enabled via enableEncryption flag → loads PEM certificate → applies ssl.PROTOCOL_TLS_CLIENT → overrides port to 8883
 
-### UML Design Diagram(s)
-
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+The constructor parameter disableAllComms allows DeviceDataManager to bypass MQTT/CoAP initialization for isolated callback testing. Asynchronous operation is ensured by removing the blocking wait_for_publish() call, allowing the Paho MQTT client's background thread to handle publish confirmations without blocking subscription callbacks.
 
 
-### Unit Tests Executed
+## Code Repository and Branch:
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
+**URL:** https://github.com/pruthghp/cda-lab-modules-pruthghp/tree/labmodule10
 
-- 
-- 
-- 
 
-### Integration Tests Executed
+## UML Design Diagram(s):
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
+**Link:** https://drive.google.com/file/d/1dH_bf2AlImDt7V7T0tT8BtsQxVeXSiSh/view?usp=sharing
 
-- 
-- 
-- 
 
-EOF.
+## Unit Tests Executed:
+
+- None
+
+## Integration Tests Executed:
+
+- MqttClientConnectorTest
+- MqttClientPerformanceTest
+- DeviceDataManagerCallbackTest
+- DeviceDataManagerIntegrationTest
+- ConstrainedDeviceApp
+

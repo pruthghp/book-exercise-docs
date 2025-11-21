@@ -2,48 +2,49 @@
 
 ## Lab Module 10
 
-Be sure to implement all the PIOT-GDA-* issues (requirements) listed at [PIOT-INF-10-001 - Lab Module 10](https://github.com/orgs/programming-the-iot/projects/1#column-10488510).
-
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+#### What does your implementation do?
 
-What does your implementation do? 
+The implementation enables comprehensive bidirectional MQTT communication between the CDA and GDA with the following capabilities:
 
-How does your implementation work?
+- **Secure Communication**: Supports TLS/SSL encrypted connections with X.509 certificate validation and optional username/password authentication loaded from separate credential files
+- **Automated Subscriptions**: Automatically subscribes to three CDA topics (ActuatorResponse, SensorMsg, SystemPerfMsg) upon connection using dedicated inner class message listeners
+- **Intelligent Humidity Control**: Monitors humidity sensor data from the CDA and triggers humidifier actuation commands when humidity remains below 30% or above 50% for 300 seconds, with automatic OFF commands when nominal levels (40%) are restored
+- **Message Routing**: Receives and processes sensor data, system performance metrics, and actuator responses through type-specific listeners that convert JSON payloads to typed data objects
+- **Bidirectional Control**: Publishes actuator commands to the CDA via MQTT while receiving and logging actuator response confirmations, completing the feedback loop
 
-### Code Repository and Branch
+#### How does your implementation work?
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
+**MQTT Communication:**
 
-URL: 
+The MqttClientConnector uses MqttAsyncClient with three inner class listeners implementing IMqttMessageListener. Upon connection, connectComplete() automatically subscribes to CDA topics:
 
-### UML Design Diagram(s)
+- **ActuatorResponseMessageListener**: Handles actuator responses from CDA
+- **SensorDataMessageListener**: Processes sensor data and routes to DeviceDataManager
+- **SystemPerformanceDataMessageListener**: Handles system performance metrics
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+Each listener deserializes JSON payloads using DataUtil and invokes the corresponding DeviceDataManager callback. The connection initialization loads TLS certificates and credentials from configuration files, falling back to insecure connections if encryption fails.
 
+**Humidity Threshold Control:**
 
-### Unit Tests Executed
+DeviceDataManager tracks humidity readings using latestHumiditySensorData and latestHumiditySensorTimeStamp. When handleSensorMessage() receives humidity data, it calls handleHumiditySensorAnalysis() which compares readings against floor (30%) and ceiling (50%) thresholds. If humidity remains exceptional for 300 seconds (calculated using ChronoUnit.SECONDS.between()), the method creates an ActuatorData command with ON/OFF state and publishes it to the CDA via sendActuatorCommandToCda(). This enables distributed control where CDA handles temperature locally while GDA manages humidity remotely.
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
+### Code Repository and Branch:
 
-- 
-- 
-- 
+**URL**: https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule10
 
-### Integration Tests Executed
+### UML Design Diagram(s):
 
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
+**Link**: https://drive.google.com/file/d/1LBusMDC9h644PGvXFNZrr4uiDKCFd5EU/view?usp=sharing
 
-- 
-- 
-- 
+### Unit Tests Executed:
 
-EOF.
+- None
+
+### Integration Tests Executed:
+
+- MqttClientConnectorTest
+- DeviceDataManagerSimpleCdaActuationTest
+- GatewayDeviceApp
+
