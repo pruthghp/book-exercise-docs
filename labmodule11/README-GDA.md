@@ -1,49 +1,45 @@
 # Gateway Device Application (Connected Devices)
-
 ## Lab Module 11
-
-Be sure to implement all the PIOT-GDA-* issues (requirements) listed at [PIOT-INF-11-001 - Lab Module 11](https://github.com/orgs/programming-the-iot/projects/1#column-10488514).
 
 ### Description
 
-NOTE: Include two full paragraphs describing your implementation approach by answering the questions listed below.
+#### What does your implementation do?
 
-What does your implementation do? 
+This implementation establishes cloud integration with Ubidots IoT platform, enabling the Gateway Device Application (GDA) to communicate with cloud services via MQTT over TLS. The system collects sensor data from the Constrained Device Application (CDA) and system performance metrics from the GDA, transmits this data to Ubidots for storage and analysis, and receives actuation commands from the cloud service to control edge devices.
 
-How does your implementation work?
+**Key capabilities include:**
+- Secure MQTT connectivity to Ubidots cloud service with TLS encryption and token-based authentication
+- Bidirectional data flow between edge devices and cloud platform
+- Automatic topic provisioning and subscription management with asynchronous connection handling
+- LED actuation event processing from cloud-triggered commands
+- System performance data decomposition into individual metrics (CPU and memory utilization)
 
-### Code Repository and Branch
+#### How does your implementation work?
 
-NOTE: Be sure to include the branch (e.g. https://github.com/programming-the-iot/python-components/tree/alpha001).
+The implementation uses `CloudClientConnector` as the primary interface to Ubidots, delegating MQTT operations to `MqttClientConnector` which handles the underlying protocol communication. When the cloud connection completes, the `IConnectionListener` callback triggers automatic subscription to LED actuation topics. Data flows from the CDA through `DeviceDataManager` to `CloudClientConnector`, where it's converted to Ubidots-compatible `TimeAndValuePayloadData` JSON format and published to cloud topics following the `/v1.6/devices/` structure.
 
-URL: 
+**Core workflow:**
+- `MqttClientConnector` manages dual connections: local MQTT broker for CDA communication and Ubidots cloud broker for cloud integration
+- `CloudClientConnector` implements `IConnectionListener` to receive connection completion notifications and provision cloud topics
+- `SystemPerformanceData` is split into separate CPU and memory sensor readings before cloud transmission
+- LED actuation events from Ubidots are received by `LedEnablementMessageListener`, converted to `ActuatorData`, and forwarded through `DeviceDataManager` to the CDA
+- Asynchronous connection handling ensures LED topic subscription occurs only after cloud connection fully establishes
 
-### UML Design Diagram(s)
 
-NOTE: Include one or more UML designs representing your solution. It's expected each
-diagram you provide will look similar to, but not the same as, its counterpart in the
-book [Programming the IoT](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+### Code Repository and Branch:
+
+**URL:** [https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule11](https://github.com/pruthghp/gda-lab-modules-pruthghp/tree/labmodule11)
+
+### UML Design Diagram(s):
+
+**URL:** [https://drive.google.com/file/d/1w44KFUMbII6dWYZ6IJBRS4HqJdCsrX2Z/view?usp=sharing](https://drive.google.com/file/d/1w44KFUMbII6dWYZ6IJBRS4HqJdCsrX2Z/view?usp=sharing)
 
 
-### Unit Tests Executed
+### Unit Tests Executed:
 
-NOTE: TA's will execute your unit tests. You only need to list each test case below
-(e.g. ConfigUtilTest, DataUtilTest, etc). Be sure to include all previous tests, too,
-since you need to ensure you haven't introduced regressions.
+- TimeAndValuePayloadDataTest
 
-- 
-- 
-- 
+### Integration Tests Executed:
 
-### Integration Tests Executed
-
-NOTE: TA's will execute most of your integration tests using their own environment, with
-some exceptions (such as your cloud connectivity tests). In such cases, they'll review
-your code to ensure it's correct. As for the tests you execute, you only need to list each
-test case below (e.g. SensorSimAdapterManagerTest, DeviceDataManagerTest, etc.)
-
-- 
-- 
-- 
-
-EOF.
+- MqttClientConnectorTest
+- CloudClientConnectorTest
