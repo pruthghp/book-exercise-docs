@@ -101,7 +101,7 @@ I built the original Kshavi at Vanadootha and witnessed farmers losing entire ha
 
 ### System Architecture Diagram
 
-**Diagram URL:** https://drive.google.com/file/d/1B_jr5lWOc1aw_gS6nZr4vud5DFImu36o/view?usp=sharing
+**Diagram URL:** https://drive.google.com/file/d/1TGKHq7nOUh9vyVPsTrIwQdHT8g90oxsk/view?usp=sharing
 
 ### Species Detection Logic
 
